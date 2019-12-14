@@ -54,6 +54,9 @@ public class QRView:NSObject,FlutterPlatformView {
                     self?.pauseCamera()
                 case "resumeCamera":
                     self?.resumeCamera()
+                case "imgQrCode":
+                  var arguments = call.arguments as! Dictionary<String, String>
+                    self?.imgQrCode(path:arguments["file"] ?? "",result:result)
                 default:
                     result(FlutterMethodNotImplemented)
                     return
@@ -97,6 +100,26 @@ public class QRView:NSObject,FlutterPlatformView {
             if !sc.isScanning() {
                 sc.unfreezeCapture()
             }
+        }
+    }
+
+    func imgQrCode(path:String,result:FlutterResult) {
+        let image = UIImage(contentsOfFile: path)
+        let detector = CIDetector(ofType: CIDetectorTypeQRCode, context: nil, options: [CIDetectorAccuracy: CIDetectorAccuracyHigh])
+        let features = detector?.features(in: CIImage(cgImage: (image?.cgImage)!), options: nil)
+        if let features = features {
+            if features.count > 0 {
+                if let feature = features.first as? CIQRCodeFeature {
+                    let qrData = feature.messageString
+                    result(qrData)
+                } else {
+                    result(nil)
+                }
+            } else {
+                result(nil)
+            }
+        } else {
+            result(nil)
         }
     }
 }
