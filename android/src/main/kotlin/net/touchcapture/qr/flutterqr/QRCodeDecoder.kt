@@ -1,8 +1,7 @@
-package net.touchcapture.qr.flutterqr
+package me.hetian.flutter_qr_reader
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.BitmapFactory.Options
 import com.google.zxing.*
 import com.google.zxing.common.GlobalHistogramBinarizer
 import com.google.zxing.common.HybridBinarizer
@@ -62,7 +61,7 @@ object QRCodeDecoder {
      */
     private fun getDecodeAbleBitmap(picturePath: String): Bitmap? {
         return try {
-            val options = Options()
+            val options = BitmapFactory.Options()
             options.inJustDecodeBounds = true
             BitmapFactory.decodeFile(picturePath, options)
             var sampleSize = options.outHeight / 400
@@ -78,26 +77,27 @@ object QRCodeDecoder {
     }
 
     init {
-        val allFormats: List<BarcodeFormat> = ArrayList()
-        net.touchcapture.qr.flutterqr.allFormats.add(BarcodeFormat.AZTEC)
-        net.touchcapture.qr.flutterqr.allFormats.add(BarcodeFormat.CODABAR)
-        net.touchcapture.qr.flutterqr.allFormats.add(BarcodeFormat.CODE_39)
-        net.touchcapture.qr.flutterqr.allFormats.add(BarcodeFormat.CODE_93)
-        net.touchcapture.qr.flutterqr.allFormats.add(BarcodeFormat.CODE_128)
-        net.touchcapture.qr.flutterqr.allFormats.add(BarcodeFormat.DATA_MATRIX)
-        net.touchcapture.qr.flutterqr.allFormats.add(BarcodeFormat.EAN_8)
-        net.touchcapture.qr.flutterqr.allFormats.add(BarcodeFormat.EAN_13)
-        net.touchcapture.qr.flutterqr.allFormats.add(BarcodeFormat.ITF)
-        net.touchcapture.qr.flutterqr.allFormats.add(BarcodeFormat.MAXICODE)
-        net.touchcapture.qr.flutterqr.allFormats.add(BarcodeFormat.PDF_417)
-        net.touchcapture.qr.flutterqr.allFormats.add(BarcodeFormat.QR_CODE)
-        net.touchcapture.qr.flutterqr.allFormats.add(BarcodeFormat.RSS_14)
-        net.touchcapture.qr.flutterqr.allFormats.add(BarcodeFormat.RSS_EXPANDED)
-        net.touchcapture.qr.flutterqr.allFormats.add(BarcodeFormat.UPC_A)
-        net.touchcapture.qr.flutterqr.allFormats.add(BarcodeFormat.UPC_E)
-        net.touchcapture.qr.flutterqr.allFormats.add(BarcodeFormat.UPC_EAN_EXTENSION)
+        val allFormats: ArrayList<BarcodeFormat> =ArrayList()
+
+        allFormats.add(BarcodeFormat.AZTEC)
+        allFormats.add(BarcodeFormat.CODABAR)
+        allFormats.add(BarcodeFormat.CODE_39)
+        allFormats.add(BarcodeFormat.CODE_93)
+        allFormats.add(BarcodeFormat.CODE_128)
+        allFormats.add(BarcodeFormat.DATA_MATRIX)
+        allFormats.add(BarcodeFormat.EAN_8)
+        allFormats.add(BarcodeFormat.EAN_13)
+        allFormats.add(BarcodeFormat.ITF)
+        allFormats.add(BarcodeFormat.MAXICODE)
+        allFormats.add(BarcodeFormat.PDF_417)
+        allFormats.add(BarcodeFormat.QR_CODE)
+        allFormats.add(BarcodeFormat.RSS_14)
+        allFormats.add(BarcodeFormat.RSS_EXPANDED)
+        allFormats.add(BarcodeFormat.UPC_A)
+        allFormats.add(BarcodeFormat.UPC_E)
+        allFormats.add(BarcodeFormat.UPC_EAN_EXTENSION)
         HINTS[DecodeHintType.TRY_HARDER] = BarcodeFormat.QR_CODE
-        HINTS[DecodeHintType.POSSIBLE_FORMATS] = net.touchcapture.qr.flutterqr.allFormats
+        HINTS[DecodeHintType.POSSIBLE_FORMATS] = allFormats
         HINTS[DecodeHintType.CHARACTER_SET] = "utf-8"
     }
 }

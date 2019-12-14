@@ -1,8 +1,11 @@
 import 'dart:async';
+import 'dart:io';
+import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 
 typedef void QRViewCreatedCallback(QRViewController controller);
 
@@ -136,7 +139,18 @@ class QRViewController {
   void resumeCamera() {
     _channel.invokeMethod("resumeCamera");
   }
-
+  Future<String> imgScan(File file) async {
+      if (file?.existsSync() == false) {
+        return null;
+      }
+      try {
+        final rest = await _channel.invokeMethod("imgQrCode", {"file": file.path});
+        return rest;
+      } catch (e) {
+        print(e);
+        return null;
+      }
+    }
   void dispose() {
     _scanUpdateController.close();
   }

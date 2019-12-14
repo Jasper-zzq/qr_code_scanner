@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:qr_code_scanner/qr_scanner_overlay_shape.dart';
+import 'package:image_picker/image_picker.dart';
 
 void main() => runApp(MaterialApp(home: QRViewExample()));
 
@@ -24,7 +25,7 @@ class _QRViewExampleState extends State<QRViewExample> {
   var cameraState = front_camera;
   QRViewController controller;
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
-
+  var path;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -120,6 +121,22 @@ class _QRViewExampleState extends State<QRViewExample> {
                           },
                           child: Text('resume', style: TextStyle(fontSize: 20)),
                         ),
+                      ),
+                      Container(
+                        margin: EdgeInsets.all(8.0),
+                        child: RaisedButton(
+                          onPressed: () async {
+                            if (path == null) {
+                              path = await ImagePicker.pickImage(
+                                  source: ImageSource.gallery);
+                            }
+                            if (path == null) return;
+                            var s = await controller?.imgScan(path);
+
+                            print(s);
+                          },
+                          child: Text('相册', style: TextStyle(fontSize: 20)),
+                        ),
                       )
                     ],
                   ),
@@ -152,7 +169,7 @@ class _QRViewExampleState extends State<QRViewExample> {
 
   @override
   void dispose() {
-    controller.dispose();
+    controller?.dispose();
     super.dispose();
   }
 }

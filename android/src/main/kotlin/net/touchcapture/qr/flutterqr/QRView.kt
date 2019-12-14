@@ -1,16 +1,17 @@
 package net.touchcapture.qr.flutterqr
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Application
-import android.content.Context
 import android.content.pm.PackageManager
 import android.content.pm.PackageManager.PERMISSION_GRANTED
+import android.hardware.Camera.CameraInfo
+import android.os.AsyncTask
 import android.os.Build
 import android.os.Bundle
 import android.view.View
 import com.google.zxing.ResultPoint
-import android.hardware.Camera.CameraInfo
 import com.journeyapps.barcodescanner.BarcodeCallback
 import com.journeyapps.barcodescanner.BarcodeResult
 import com.journeyapps.barcodescanner.BarcodeView
@@ -18,6 +19,9 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.PluginRegistry
 import io.flutter.plugin.platform.PlatformView
+import me.hetian.flutter_qr_reader.QRCodeDecoder
+import java.io.File
+
 
 class QRView(private val registrar: PluginRegistry.Registrar, id: Int) :
         PlatformView,MethodChannel.MethodCallHandler {
@@ -148,6 +152,36 @@ class QRView(private val registrar: PluginRegistry.Registrar, id: Int) :
         }
     }
 
+
+    @SuppressLint("StaticFieldLeak")
+    private fun imgQrCode(call: MethodCall,result: MethodChannel.Result?){
+
+        val filePath = call.argument<String>("file")
+        if (filePath == null) {
+            result?.error("Not found data", null, null)
+            return
+        }
+        val file = File(filePath)
+        if (!file.exists()) {
+            result?.error("File not found", null, null)
+        }
+
+         object : AsyncTask<String?, Int?, String?>() {
+
+             override fun doInBackground(vararg params: String?): String? {
+                 return QRCodeDecoder.syncDecodeQRCode(filePath)
+             }
+            override fun onPostExecute(s: String?) {
+                super.onPostExecute(s)
+                if (null == s) {
+                    result?.error("not data", null, null)
+                } else {
+                    result?.success(s)
+                }
+            }
+         }.execute(filePath)
+    }
+
     private fun hasCameraPermission(): Boolean {
         return Build.VERSION.SDK_INT < Build.VERSION_CODES.M ||
                 activity.checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
@@ -170,6 +204,9 @@ class QRView(private val registrar: PluginRegistry.Registrar, id: Int) :
             }
             "resumeCamera" -> {
                 resumeCamera()
+            }
+            "imgQrCode" ->{
+                imgQrCode(call,result)
             }
         }
     }
